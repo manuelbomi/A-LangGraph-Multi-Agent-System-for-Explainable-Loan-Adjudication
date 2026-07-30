@@ -1,0 +1,36 @@
+# HorizontalPodAutoscaler -- illustrates the intended production scaling
+# pattern. NOT safely usable above 1 replica until the checkpointer is
+# swapped from SQLite to a Postgres-backed store shared across pods (see
+# deployment.yaml's top comment and README "Key Design Decisions"). Included
+# here, with that caveat explicit, rather than omitted, because the
+# scaling *shape* (CPU-driven autoscaling of a stateless-except-checkpointer
+# API layer) is the pattern worth documenting.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: underwriting-api
+  labels:
+    app.kubernetes.io/name: credit-underwriting-decision-graph
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: underwriting-api
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300

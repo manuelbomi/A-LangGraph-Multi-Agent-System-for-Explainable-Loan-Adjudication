@@ -1,0 +1,20 @@
+# Persistent storage for the SQLite checkpoint DB.
+#
+# IMPORTANT: this only works correctly at replicas=1 (ReadWriteOnce). SQLite
+# is the right default for this demo's single-process deployment, but it is
+# NOT safe for multiple pods to share via ReadWriteMany. See
+# deploy/OPENSHIFT.md and the README's "Key Design Decisions" section for
+# the swap to a Postgres-backed LangGraph checkpointer needed before this
+# service can run with replicas > 1.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: underwriting-checkpoint-data
+  labels:
+    app.kubernetes.io/name: credit-underwriting-decision-graph
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

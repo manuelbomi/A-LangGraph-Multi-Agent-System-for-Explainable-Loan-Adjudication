@@ -1,0 +1,38 @@
+# One-command local dev spin-up: `docker compose up --build`.
+#
+# Runs entirely offline by default (no LLM provider keys set -> the
+# MockChatModel is used). To exercise a real provider, uncomment and set
+# OPENAI_API_KEY / ANTHROPIC_API_KEY below (or export them in your shell --
+# `env_file: .env` picks up a local .env if present).
+
+services:
+  underwriting-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: credit-underwriting-decision-graph:local
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      LOG_LEVEL: INFO
+      SERVICE_NAME: credit-underwriting-decision-graph
+      CHECKPOINT_DB_PATH: /app/data/checkpoints.sqlite
+      DTI_BORDERLINE_LOW: "0.36"
+      DTI_BORDERLINE_HIGH: "0.45"
+      DTI_HARD_DECLINE: "0.55"
+      # OPENAI_API_KEY: ""
+      # ANTHROPIC_API_KEY: ""
+    volumes:
+      # Persist the SQLite checkpoint DB across container restarts, so a
+      # human-escalation pause survives a `docker compose restart`.
+      - underwriting-data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=3).status == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  underwriting-data:

@@ -1,0 +1,17 @@
+# Non-secret configuration. Mirrors .env.example -- keep the two in sync.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: underwriting-config
+  labels:
+    app.kubernetes.io/name: credit-underwriting-decision-graph
+data:
+  APP_ENV: "production"
+  LOG_LEVEL: "INFO"
+  SERVICE_NAME: "credit-underwriting-decision-graph"
+  CHECKPOINT_DB_PATH: "/app/data/checkpoints.sqlite"
+  DTI_BORDERLINE_LOW: "0.36"
+  DTI_BORDERLINE_HIGH: "0.45"
+  DTI_HARD_DECLINE: "0.55"
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
