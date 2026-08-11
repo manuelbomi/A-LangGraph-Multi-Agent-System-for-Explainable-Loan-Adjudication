@@ -1,8 +1,7 @@
 # Credit Underwriting Decision Graph: A LangGraph Multi-Agent System for Explainable Loan Adjudication
 
-> **Fictional bank disclaimer:** This repository is a portfolio/demonstration
-> project. All examples reference **"Northbridge Financial Group"** — a
-> wholly invented company name, created solely for this demo. All
+> **Fictional bank disclaimer:** In this repo, **"Northbridge Financial Group"** — is a
+> wholly invented company name, created solely for this project. All
 > applicants, loan applications, pay-stub text, and credit data are
 > **synthetic**. No real institution, dataset, or individual is represented
 > anywhere in this repo.
